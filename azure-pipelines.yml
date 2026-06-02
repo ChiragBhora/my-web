@@ -4,16 +4,30 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+- name: SWA_TOKEN
+  value: $(SWA_TOKEN)
+
 steps:
 
 - checkout: self
 
 - script: |
-    echo "Running tests..."
-    echo "All tests passed"
+    echo "Running Tests..."
+    echo "Tests Passed"
   displayName: 'Run Tests'
 
+- script: |
+    if [ -z "$(SWA_TOKEN)" ]; then
+      echo "ERROR: SWA_TOKEN is empty"
+      exit 1
+    else
+      echo "SWA_TOKEN found"
+    fi
+  displayName: 'Verify Deployment Token'
+
 - task: AzureStaticWebApp@0
+  displayName: 'Deploy to Azure Static Web App'
   inputs:
     app_location: '/'
     output_location: ''
